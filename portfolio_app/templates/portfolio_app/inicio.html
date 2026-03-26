@@ -1,0 +1,1123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" data-tema="claro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Portafolio | Desarrollador Full Stack</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- AOS - Animate On Scroll -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Google Fonts - Playfair Display + DM Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Estilos personalizados con la paleta pastel de la imagen -->
+    <style>
+        /* =============================================
+           VARIABLES DE COLOR - Paleta pastel de la imagen
+           Rosa suave, verde menta, durazno, crema
+           ============================================= */
+        :root {
+            --rosa:     #F2D4CC;   /* Rosa suave */
+            --menta:    #C8DDD6;   /* Verde menta */
+            --durazno:  #F2A68A;   /* Durazno/naranja suave */
+            --crema:    #F5E6DF;   /* Crema cálido */
+            --blanco:   #FDFAF8;
+            --texto:    #3D3530;
+            --texto-2:  #6B5B53;
+            --borde:    #E8D5CB;
+            --fondo:    #FDFAF8;
+            --tarjeta:  #FFFFFF;
+        }
+
+        /* Modo oscuro */
+        [data-tema="oscuro"] {
+            --blanco:   #1A1512;
+            --texto:    #F0E8E4;
+            --texto-2:  #C4B0A8;
+            --borde:    #3D2E28;
+            --fondo:    #1A1512;
+            --tarjeta:  #251C18;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--fondo);
+            color: var(--texto);
+            transition: background-color 0.4s ease, color 0.4s ease;
+            cursor: none; /* Oculta cursor nativo para cursor personalizado */
+        }
+
+        /* =============================================
+           CURSOR PERSONALIZADO
+           ============================================= */
+        #cursor-principal {
+            width: 12px; height: 12px;
+            background: var(--durazno);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+        }
+
+        #cursor-seguidor {
+            width: 36px; height: 36px;
+            border: 2px solid var(--menta);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: left 0.15s ease, top 0.15s ease, width 0.3s ease, height 0.3s ease;
+        }
+
+        /* =============================================
+           PRELOADER
+           ============================================= */
+        #precargador {
+            position: fixed; inset: 0;
+            background: var(--crema);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1.5rem;
+            transition: opacity 0.6s ease;
+        }
+
+        .logo-carga {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--texto);
+            animation: pulsoCarga 1.2s ease-in-out infinite;
+        }
+
+        .barra-carga {
+            width: 200px; height: 3px;
+            background: var(--borde);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .progreso-carga {
+            height: 100%;
+            background: linear-gradient(90deg, var(--rosa), var(--durazno));
+            border-radius: 99px;
+            animation: cargar 1.5s ease-in-out forwards;
+        }
+
+        @keyframes cargar {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        @keyframes pulsoCarga {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* =============================================
+           NAVBAR
+           ============================================= */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1.2rem 2rem;
+            background: rgba(253, 250, 248, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--borde);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.4s ease, border-color 0.4s ease;
+        }
+
+        [data-tema="oscuro"] .navbar {
+            background: rgba(26, 21, 18, 0.85);
+        }
+
+        .logo-nav {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--texto);
+        }
+
+        .logo-nav span { color: var(--durazno); }
+
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+
+        .nav-links a {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--texto-2);
+            text-decoration: none;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0; right: 0;
+            height: 2px;
+            background: var(--durazno);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links a:hover { color: var(--texto); }
+        .nav-links a:hover::after { transform: scaleX(1); }
+
+        /* Botón toggle modo oscuro */
+        #btn-tema {
+            width: 44px; height: 24px;
+            background: var(--menta);
+            border-radius: 99px;
+            border: none;
+            cursor: none;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        #btn-tema::after {
+            content: '';
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 18px; height: 18px;
+            background: white;
+            border-radius: 50%;
+            transition: left 0.3s ease;
+        }
+
+        [data-tema="oscuro"] #btn-tema { background: var(--durazno); }
+        [data-tema="oscuro"] #btn-tema::after { left: 23px; }
+
+        /* =============================================
+           HERO SECTION
+           ============================================= */
+        .seccion-hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 7rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Fondo decorativo con colores de la paleta */
+        .blob-decorativo {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+        }
+
+        .blob-1 {
+            width: 400px; height: 400px;
+            background: var(--rosa);
+            top: -100px; right: -100px;
+            animation: flotarBlob 8s ease-in-out infinite;
+        }
+
+        .blob-2 {
+            width: 300px; height: 300px;
+            background: var(--menta);
+            bottom: -50px; left: -80px;
+            animation: flotarBlob 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes flotarBlob {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -30px) scale(1.05); }
+        }
+
+        .etiqueta-hero {
+            display: inline-block;
+            background: var(--rosa);
+            color: var(--texto-2);
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.4rem 1rem;
+            border-radius: 99px;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .titulo-hero {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            line-height: 1.1;
+            color: var(--texto);
+            margin-bottom: 1.5rem;
+        }
+
+        .titulo-hero em {
+            font-style: italic;
+            color: var(--durazno);
+        }
+
+        .descripcion-hero {
+            font-size: 1.1rem;
+            color: var(--texto-2);
+            max-width: 500px;
+            line-height: 1.8;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Botones */
+        .btn-primario {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--texto);
+            color: var(--blanco);
+            padding: 0.85rem 2rem;
+            border-radius: 99px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: none;
+        }
+
+        .btn-primario:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(61,53,48,0.2);
+        }
+
+        .btn-secundario {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 2px solid var(--borde);
+            color: var(--texto);
+            padding: 0.85rem 2rem;
+            border-radius: 99px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: border-color 0.3s, transform 0.3s;
+            cursor: none;
+        }
+
+        .btn-secundario:hover {
+            border-color: var(--durazno);
+            transform: translateY(-2px);
+        }
+
+        /* =============================================
+           SECCIÓN ESTADÍSTICAS (CONTADORES)
+           ============================================= */
+        .seccion-estadisticas {
+            padding: 5rem 2rem;
+            background: var(--crema);
+            transition: background 0.4s;
+        }
+
+        [data-tema="oscuro"] .seccion-estadisticas {
+            background: var(--tarjeta);
+        }
+
+        .tarjeta-estadistica {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .numero-estadistica {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--texto);
+            display: block;
+        }
+
+        .etiqueta-estadistica {
+            font-size: 0.9rem;
+            color: var(--texto-2);
+            margin-top: 0.3rem;
+        }
+
+        /* =============================================
+           SECCIÓN PROYECTOS
+           ============================================= */
+        .seccion-proyectos {
+            padding: 6rem 2rem;
+        }
+
+        .etiqueta-seccion {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--durazno);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .titulo-seccion {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: var(--texto);
+            margin-bottom: 3rem;
+        }
+
+        /* Tarjeta de proyecto con hover */
+        .tarjeta-proyecto {
+            background: var(--tarjeta);
+            border: 1px solid var(--borde);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+        }
+
+        .tarjeta-proyecto:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(61,53,48,0.1);
+            border-color: var(--durazno);
+        }
+
+        .imagen-proyecto {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, var(--rosa), var(--menta));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .cuerpo-tarjeta { padding: 1.5rem; }
+
+        .chip-tecnologia {
+            display: inline-block;
+            background: var(--crema);
+            color: var(--texto-2);
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 0.2rem 0.65rem;
+            border-radius: 99px;
+            margin: 0.15rem;
+            border: 1px solid var(--borde);
+        }
+
+        [data-tema="oscuro"] .chip-tecnologia {
+            background: var(--fondo);
+            border-color: var(--borde);
+        }
+
+        /* =============================================
+           SECCIÓN HABILIDADES
+           ============================================= */
+        .seccion-habilidades {
+            padding: 6rem 2rem;
+            background: var(--crema);
+            transition: background 0.4s;
+        }
+
+        [data-tema="oscuro"] .seccion-habilidades {
+            background: var(--tarjeta);
+        }
+
+        .barra-habilidad {
+            height: 6px;
+            background: var(--borde);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .progreso-habilidad {
+            height: 100%;
+            background: linear-gradient(90deg, var(--rosa), var(--durazno));
+            border-radius: 99px;
+            width: 0%;
+            transition: width 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* =============================================
+           SECCIÓN CONTACTO
+           ============================================= */
+        .seccion-contacto {
+            padding: 6rem 2rem;
+        }
+
+        .campo-formulario {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            background: var(--fondo);
+            border: 1.5px solid var(--borde);
+            border-radius: 10px;
+            color: var(--texto);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+
+        .campo-formulario:focus {
+            border-color: var(--durazno);
+            box-shadow: 0 0 0 3px rgba(242,166,138,0.15);
+        }
+
+        .campo-formulario::placeholder { color: var(--texto-2); opacity: 0.6; }
+
+        .btn-enviar {
+            width: 100%;
+            padding: 1rem;
+            background: var(--texto);
+            color: var(--blanco);
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: none;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+        }
+
+        .btn-enviar:hover {
+            background: var(--durazno);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(242,166,138,0.3);
+        }
+
+        /* =============================================
+           FOOTER
+           ============================================= */
+        .footer {
+            padding: 2.5rem;
+            text-align: center;
+            border-top: 1px solid var(--borde);
+            color: var(--texto-2);
+            font-size: 0.85rem;
+        }
+
+        /* =============================================
+           BOTÓN FLOTANTE WHATSAPP
+           ============================================= */
+        .whatsapp-flotante {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 56px; height: 56px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 900;
+            text-decoration: none;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: latirWA 2s ease-in-out infinite;
+        }
+
+        .whatsapp-flotante:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.5);
+        }
+
+        @keyframes latirWA {
+            0%, 100% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4); }
+            50% { box-shadow: 0 4px 35px rgba(37, 211, 102, 0.7); }
+        }
+
+        .whatsapp-flotante svg { width: 28px; height: 28px; fill: white; }
+
+        /* =============================================
+           MENSAJES DE DJANGO (éxito/error del formulario)
+           ============================================= */
+        .alerta-mensaje {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            animation: deslizarAlerta 0.4s ease;
+        }
+
+        .alerta-exito {
+            background: rgba(200, 221, 214, 0.4);
+            border: 1px solid var(--menta);
+            color: var(--texto);
+        }
+
+        .alerta-error {
+            background: rgba(242, 212, 204, 0.4);
+            border: 1px solid var(--rosa);
+            color: var(--texto);
+        }
+
+        @keyframes deslizarAlerta {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =============================================
+           DIVISOR DECORATIVO
+           ============================================= */
+        .divisor {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .linea-divisor {
+            flex: 1;
+            height: 1px;
+            background: var(--borde);
+        }
+
+        .punto-divisor {
+            width: 8px; height: 8px;
+            background: var(--durazno);
+            border-radius: 50%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .seccion-hero { padding-top: 6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =============================================
+         PRELOADER - Se muestra mientras carga la página
+         ============================================= -->
+    <div id="precargador">
+        <div class="logo-carga">Isael_dev</div>
+        <div class="barra-carga">
+            <div class="progreso-carga"></div>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--texto-2); letter-spacing: 0.1em;">CARGANDO PORTAFOLIO...</p>
+    </div>
+
+    <!-- =============================================
+         CURSOR PERSONALIZADO
+         ============================================= -->
+    <div id="cursor-principal"></div>
+    <div id="cursor-seguidor"></div>
+
+    <!-- =============================================
+         NAVBAR - Barra de navegación fija
+         ============================================= -->
+    <nav class="navbar">
+        <a href="#inicio" class="logo-nav"> <span>Isael_dev</span> </a>
+
+        <div class="nav-links">
+            <a href="#inicio">Inicio</a>
+            <a href="#proyectos">Proyectos</a>
+            <a href="#habilidades">Habilidades</a>
+            <a href="#contacto">Contacto</a>
+        </div>
+
+        <!-- Toggle modo oscuro/claro -->
+        <button id="btn-tema" title="Cambiar tema" aria-label="Cambiar tema"></button>
+    </nav>
+
+    <!-- =============================================
+         HERO - Sección principal
+         ============================================= -->
+    <section class="seccion-hero" id="inicio">
+        <!-- Blobs decorativos de fondo -->
+        <div class="blob-decorativo blob-1"></div>
+        <div class="blob-decorativo blob-2"></div>
+
+        <div class="max-w-6xl mx-auto w-full relative z-10">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="etiqueta-hero" data-aos="fade-down" data-aos-duration="600">
+                        👋 Disponible para proyectos
+                    </span>
+
+                    <h1 class="titulo-hero" data-aos="fade-up" data-aos-duration="700" data-aos-delay="100">
+                        Creando <em>el futuro</em><br>
+                        a través de la<br>
+                        innovación.
+                    </h1>
+
+                    <p class="descripcion-hero" data-aos="fade-up" data-aos-duration="700" data-aos-delay="200">
+                        Desarrollo soluciones digitales que resuelven problemas reales.
+                        Full Stack Developer enfocado en escalabilidad, seguridad y experiencia de usuario.
+                    </p>
+
+                    <div class="flex flex-wrap gap-4" data-aos="fade-up" data-aos-duration="700" data-aos-delay="300">
+                        <a href="#proyectos" class="btn-primario">
+                            Ver proyectos
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="#contacto" class="btn-secundario">
+                            Hablemos
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Avatar decorativo -->
+<!-- Avatar decorativo -->
+<div class="hidden md:flex justify-center" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
+    <img src="{% static 'portfolio_app/foto.jpg' %}"
+         alt="Mi foto"
+         style="width:320px; height:380px; object-fit:cover; border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%; box-shadow: 0 30px 80px rgba(200,221,214,0.5);">
+</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         ESTADÍSTICAS - Contadores animados
+         Los datos vienen de la BD (modelo Estadistica)
+         Administra en: /admin/portfolio_app/estadistica/
+         ============================================= -->
+    <section class="seccion-estadisticas" id="estadisticas">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+
+                {% if estadisticas %}
+                    {% for stat in estadisticas %}
+                    <!-- Cada estadística viene de la base de datos gestionada desde el admin -->
+                    <div class="tarjeta-estadistica" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+                        <span class="numero-estadistica contador" data-objetivo="{{ stat.numero }}">0</span>
+                        <span class="etiqueta-estadistica">{{ stat.etiqueta }}</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <!-- Datos por defecto si no hay estadísticas en la BD -->
+                <div class="tarjeta-estadistica" data-aos="fade-up" data-aos-delay="0">
+                    <span class="numero-estadistica contador" data-objetivo="{{ total_proyectos }}">0</span>
+                    <span class="etiqueta-estadistica">Proyectos</span>
+                </div>
+                <div class="tarjeta-estadistica" data-aos="fade-up" data-aos-delay="100">
+                    <span class="numero-estadistica contador" data-objetivo="15">0</span>
+                    <span class="etiqueta-estadistica">Clientes</span>
+                </div>
+                <div class="tarjeta-estadistica" data-aos="fade-up" data-aos-delay="200">
+                    <span class="numero-estadistica contador" data-objetivo="4">0</span>
+                    <span class="etiqueta-estadistica">Años de experiencia</span>
+                </div>
+                <div class="tarjeta-estadistica" data-aos="fade-up" data-aos-delay="300">
+                    <span class="numero-estadistica contador" data-objetivo="100">0</span>
+                    <span class="etiqueta-estadistica">% Satisfacción</span>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         PROYECTOS - Sección dinámica desde la BD
+         Administra proyectos en: /admin/portfolio_app/proyecto/
+         ============================================= -->
+    <section class="seccion-proyectos" id="proyectos">
+        <div class="max-w-6xl mx-auto">
+            <span class="etiqueta-seccion" data-aos="fade-up">Trabajo reciente</span>
+            <div class="divisor" data-aos="fade-up">
+                <div class="linea-divisor"></div>
+                <div class="punto-divisor"></div>
+                <div class="linea-divisor"></div>
+            </div>
+            <h2 class="titulo-seccion" data-aos="fade-up">Proyectos seleccionados</h2>
+
+            <!-- Grid de proyectos -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                {% if proyectos %}
+                    {% for proyecto in proyectos %}
+                    <!-- Cada tarjeta es un proyecto de la BD - editable desde /admin/portfolio_app/proyecto/ -->
+                    <div class="tarjeta-proyecto" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}50">
+
+                        <!-- Imagen del proyecto (si tiene) o placeholder colorido -->
+                        {% if proyecto.imagen %}
+                            <img src="{{ proyecto.imagen.url }}" alt="{{ proyecto.titulo }}" class="imagen-proyecto" style="display:block;">
+                        {% else %}
+                            <div class="imagen-proyecto">
+                                {% cycle '🌐' '📱' '⚡' '🎨' '🛒' '📊' %}
+                            </div>
+                        {% endif %}
+
+                        <div class="cuerpo-tarjeta">
+                            <!-- Categoría del proyecto -->
+                            {% if proyecto.categoria %}
+                            <span style="font-size:0.7rem; color:var(--durazno); font-weight:600; letter-spacing:0.05em; text-transform:uppercase;">
+                                {{ proyecto.categoria.nombre }}
+                            </span>
+                            {% endif %}
+
+                            <h3 style="font-family:'Playfair Display',serif; font-size:1.2rem; margin: 0.5rem 0; color:var(--texto);">
+                                {{ proyecto.titulo }}
+                            </h3>
+
+                            <p style="font-size:0.875rem; color:var(--texto-2); line-height:1.7; margin-bottom:1rem;">
+                                {{ proyecto.descripcion|truncatewords:20 }}
+                            </p>
+
+                            <!-- Tecnologías usadas (separadas por coma en el admin) -->
+                            <div style="margin-bottom:1rem;">
+                                {% for tec in proyecto.lista_tecnologias %}
+                                <span class="chip-tecnologia">{{ tec }}</span>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Links del proyecto -->
+                            <div style="display:flex; gap:1rem;">
+                                {% if proyecto.url_demo %}
+                                <a href="{{ proyecto.url_demo }}" target="_blank"
+                                   style="font-size:0.8rem; color:var(--durazno); font-weight:500; text-decoration:none;">
+                                    Demo →
+                                </a>
+                                {% endif %}
+                                {% if proyecto.url_github %}
+                                <a href="{{ proyecto.url_github }}" target="_blank"
+                                   style="font-size:0.8rem; color:var(--texto-2); font-weight:500; text-decoration:none;">
+                                    GitHub →
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                {% else %}
+                <!-- Mensaje si no hay proyectos en la BD -->
+                <div class="col-span-3" style="text-align:center; padding:4rem; color:var(--texto-2);">
+                    <p style="font-size:1.1rem;">Agrega proyectos desde el panel de administración Django</p>
+                    <a href="/admin/portfolio_app/proyecto/add/" class="btn-primario" style="display:inline-flex; margin-top:1rem;">
+                        + Agregar primer proyecto
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         HABILIDADES - Barras de progreso animadas
+         Administra en: /admin/portfolio_app/habilidad/
+         ============================================= -->
+    <section class="seccion-habilidades" id="habilidades">
+        <div class="max-w-4xl mx-auto">
+            <span class="etiqueta-seccion" data-aos="fade-up">Lo que sé hacer</span>
+            <h2 class="titulo-seccion" data-aos="fade-up">Habilidades técnicas</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                {% if habilidades %}
+                    {% for habilidad in habilidades %}
+                    <!-- Cada habilidad viene de la BD - editable desde /admin/portfolio_app/habilidad/ -->
+                    <div data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}50">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                            <span style="font-weight:500; font-size:0.95rem; color:var(--texto);">{{ habilidad.nombre }}</span>
+                            <span style="font-size:0.85rem; color:var(--durazno); font-weight:600;">{{ habilidad.porcentaje }}%</span>
+                        </div>
+                        <div class="barra-habilidad">
+                            <div class="progreso-habilidad" data-porcentaje="{{ habilidad.porcentaje }}"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <!-- Habilidades de ejemplo si la BD está vacía (datos estáticos) -->
+                <div data-aos="fade-up">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                        <span style="font-weight:500;">Python / Django</span>
+                        <span style="color:var(--durazno);">92%</span>
+                    </div>
+                    <div class="barra-habilidad"><div class="progreso-habilidad" data-porcentaje="92"></div></div>
+                </div>
+                <div data-aos="fade-up" data-aos-delay="50">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                        <span style="font-weight:500;">JavaScript / React</span>
+                        <span style="color:var(--durazno);">85%</span>
+                    </div>
+                    <div class="barra-habilidad"><div class="progreso-habilidad" data-porcentaje="85"></div></div>
+                </div>
+                <div data-aos="fade-up" data-aos-delay="100">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                        <span style="font-weight:500;">PostgreSQL</span>
+                        <span style="color:var(--durazno);">80%</span>
+                    </div>
+                    <div class="barra-habilidad"><div class="progreso-habilidad" data-porcentaje="80"></div></div>
+                </div>
+                <div data-aos="fade-up" data-aos-delay="150">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                        <span style="font-weight:500;">Docker / DevOps</span>
+                        <span style="color:var(--durazno);">72%</span>
+                    </div>
+                    <div class="barra-habilidad"><div class="progreso-habilidad" data-porcentaje="72"></div></div>
+                </div>
+                <div data-aos="fade-up" data-aos-delay="200">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                        <span style="font-weight:500;">REST APIs</span>
+                        <span style="color:var(--durazno);">90%</span>
+                    </div>
+                    <div class="barra-habilidad"><div class="progreso-habilidad" data-porcentaje="90"></div></div>
+                </div>
+                <div data-aos="fade-up" data-aos-delay="250">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                        <span style="font-weight:500;">UI/UX Design</span>
+                        <span style="color:var(--durazno);">68%</span>
+                    </div>
+                    <div class="barra-habilidad"><div class="progreso-habilidad" data-porcentaje="68"></div></div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         CONTACTO - Formulario con backend Django
+         Los mensajes se guardan en la BD
+         Ver mensajes en: /admin/portfolio_app/mensajecontacto/
+         ============================================= -->
+    <section class="seccion-contacto" id="contacto">
+        <div class="max-w-4xl mx-auto">
+            <span class="etiqueta-seccion" data-aos="fade-up">¿Tienes un proyecto?</span>
+            <h2 class="titulo-seccion" data-aos="fade-up">Hablemos</h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+
+                <!-- Info de contacto -->
+                <div data-aos="fade-right">
+                    <p style="color:var(--texto-2); line-height:1.8; margin-bottom:2rem;">
+                        Estoy disponible para proyectos freelance y oportunidades laborales.
+                        Envíame un mensaje y te respondo en menos de 24 horas.
+                    </p>
+
+                    <div style="display:flex; flex-direction:column; gap:1rem;">
+                        <div style="display:flex; align-items:center; gap:1rem;">
+                            <div style="width:44px;height:44px;background:var(--rosa);border-radius:50%;display:flex;align-items:center;justify-content:center;">📧</div>
+                            <span style="color:var(--texto-2); font-size:0.9rem;">lizanahlizana@gmail.com</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:1rem;">
+                            <div style="width:44px;height:44px;background:var(--menta);border-radius:50%;display:flex;align-items:center;justify-content:center;">📍</div>
+                            <span style="color:var(--texto-2); font-size:0.9rem;">Lima, Perú</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:1rem;">
+                            <div style="width:44px;height:44px;background:var(--crema);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--borde);">🟢</div>
+                            <span style="color:var(--texto-2); font-size:0.9rem;">Disponible para trabajar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de contacto -->
+                <div data-aos="fade-left">
+
+                    <!-- Mensajes de Django (éxito/error al enviar el formulario) -->
+                    {% if messages %}
+                        {% for mensaje in messages %}
+                        <div class="alerta-mensaje {% if mensaje.tags == 'success' %}alerta-exito{% else %}alerta-error{% endif %}">
+                            {{ mensaje }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- El formulario envía a la vista enviar_contacto via POST -->
+                    <!-- Los mensajes se guardan en: /admin/portfolio_app/mensajecontacto/ -->
+                    <form method="POST" action="{% url 'enviar_contacto' %}" style="display:flex; flex-direction:column; gap:1rem;">
+                        {% csrf_token %}
+
+                        <!-- Campos del formulario (generados por Django Forms) -->
+                        {{ formulario.nombre }}
+                        {{ formulario.email }}
+                        {{ formulario.asunto }}
+                        {{ formulario.mensaje }}
+
+                        <button type="submit" class="btn-enviar">
+                            Enviar mensaje ✉️
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =============================================
+         FOOTER
+         ============================================= -->
+    <footer class="footer">
+        <p style="font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:0.5rem;">Isael_dev</p>
+        <p>Crafted with ❤️ by a Developer</p>
+        <p style="margin-top:0.5rem;">
+            <a href="/admin/" style="color:var(--durazno); text-decoration:none; font-size:0.8rem;">From the future to the present</a>
+        </p>
+    </footer>
+
+    <!-- =============================================
+         BOTÓN FLOTANTE DE WHATSAPP
+         Cambia el número de teléfono aquí ↓
+         ============================================= -->
+    <a href="https://wa.me/51999999999?text=Hola%2C%20vi%20tu%20portafolio%20y%20quiero%20hablar%20sobre%20un%20proyecto"
+       class="whatsapp-flotante"
+       target="_blank"
+       title="Contáctame por WhatsApp">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+    </a>
+
+    <!-- =============================================
+         LIBRERÍAS JS
+         ============================================= -->
+    <!-- AOS - Librería de animaciones al hacer scroll -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+    /* =============================================
+       JAVASCRIPT DEL PORTAFOLIO
+       Todo comentado en español
+       ============================================= */
+
+    // --- PRELOADER ---
+    // Oculta el preloader cuando la página termina de cargar
+    window.addEventListener('load', () => {
+        const precargador = document.getElementById('precargador');
+        setTimeout(() => {
+            precargador.style.opacity = '0';
+            setTimeout(() => {
+                precargador.style.display = 'none';
+            }, 600);
+        }, 1500); // Mínimo 1.5 segundos de preloader
+    });
+
+    // --- CURSOR PERSONALIZADO ---
+    // Mueve el cursor personalizado siguiendo el mouse
+    const cursorPrincipal = document.getElementById('cursor-principal');
+    const cursorSeguidor = document.getElementById('cursor-seguidor');
+
+    document.addEventListener('mousemove', (e) => {
+        cursorPrincipal.style.left = e.clientX + 'px';
+        cursorPrincipal.style.top = e.clientY + 'px';
+
+        // El seguidor va con un pequeño retraso (definido en CSS con transition)
+        cursorSeguidor.style.left = e.clientX + 'px';
+        cursorSeguidor.style.top = e.clientY + 'px';
+    });
+
+    // Agranda el cursor al pasar sobre elementos clickeables
+    document.querySelectorAll('a, button, [class*="tarjeta"]').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorPrincipal.style.width = '20px';
+            cursorPrincipal.style.height = '20px';
+            cursorSeguidor.style.width = '50px';
+            cursorSeguidor.style.height = '50px';
+        });
+        el.addEventListener('mouseleave', () => {
+            cursorPrincipal.style.width = '12px';
+            cursorPrincipal.style.height = '12px';
+            cursorSeguidor.style.width = '36px';
+            cursorSeguidor.style.height = '36px';
+        });
+    });
+
+    // --- MODO OSCURO/CLARO ---
+    const btnTema = document.getElementById('btn-tema');
+    const htmlRaiz = document.documentElement;
+
+    // Recupera el tema guardado en localStorage
+    const temaGuardado = localStorage.getItem('tema') || 'claro';
+    htmlRaiz.setAttribute('data-tema', temaGuardado);
+
+    btnTema.addEventListener('click', () => {
+        const temaActual = htmlRaiz.getAttribute('data-tema');
+        const nuevoTema = temaActual === 'claro' ? 'oscuro' : 'claro';
+        htmlRaiz.setAttribute('data-tema', nuevoTema);
+        localStorage.setItem('tema', nuevoTema); // Guarda preferencia
+    });
+
+    // --- AOS - Animate On Scroll ---
+    // Inicializa las animaciones al hacer scroll
+    AOS.init({
+        duration: 700,      // Duración de animaciones
+        once: true,         // Solo anima una vez
+        easing: 'ease-out-cubic',
+        offset: 80,
+    });
+
+    // --- CONTADORES ANIMADOS ---
+    // Anima los números de las estadísticas del 0 al valor objetivo
+    function animarContador(elemento) {
+        const objetivo = parseInt(elemento.getAttribute('data-objetivo'));
+        const duracion = 2000; // 2 segundos
+        const incremento = objetivo / (duracion / 16); // ~60fps
+        let actual = 0;
+
+        const intervalo = setInterval(() => {
+            actual += incremento;
+            if (actual >= objetivo) {
+                actual = objetivo;
+                clearInterval(intervalo);
+            }
+            elemento.textContent = Math.floor(actual);
+
+            // Agrega '+' si el número es grande
+            if (objetivo >= 10) elemento.textContent = Math.floor(actual) + '+';
+        }, 16);
+    }
+
+    // Usa IntersectionObserver para animar cuando son visibles
+    const observadorContadores = new IntersectionObserver((entradas) => {
+        entradas.forEach(entrada => {
+            if (entrada.isIntersecting) {
+                animarContador(entrada.target);
+                observadorContadores.unobserve(entrada.target); // Solo una vez
+            }
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.contador').forEach(el => {
+        observadorContadores.observe(el);
+    });
+
+    // --- BARRAS DE HABILIDADES ---
+    // Anima las barras de progreso cuando son visibles en pantalla
+    const observadorBarras = new IntersectionObserver((entradas) => {
+        entradas.forEach(entrada => {
+            if (entrada.isIntersecting) {
+                const porcentaje = entrada.target.getAttribute('data-porcentaje');
+                entrada.target.style.width = porcentaje + '%';
+                observadorBarras.unobserve(entrada.target);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.progreso-habilidad').forEach(barra => {
+        observadorBarras.observe(barra);
+    });
+
+    // --- SCROLL SUAVE ---
+    // Navegación suave al hacer clic en los enlaces del navbar
+    document.querySelectorAll('a[href^="#"]').forEach(enlace => {
+        enlace.addEventListener('click', function(e) {
+            e.preventDefault();
+            const destino = document.querySelector(this.getAttribute('href'));
+            if (destino) {
+                destino.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // --- AUTO-OCULTAR ALERTAS ---
+    // Oculta los mensajes de Django después de 5 segundos
+    setTimeout(() => {
+        document.querySelectorAll('.alerta-mensaje').forEach(alerta => {
+            alerta.style.transition = 'opacity 0.5s';
+            alerta.style.opacity = '0';
+            setTimeout(() => alerta.remove(), 500);
+        });
+    }, 5000);
+
+    </script>
+</body>
+</html>
